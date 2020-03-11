@@ -1,7 +1,15 @@
-import React from 'react';
+import React, {Component} from 'react';
 import ReactDOM from 'react-dom';
 
-function Example() {
+class Example extends Component{
+    constructor(props){
+        super(props);
+        this.state={
+            firstName:'',
+            lastName:'',
+        }
+    }
+    render(){
     return (
         <div className="container">
             <div className="row justify-content-center">
@@ -10,11 +18,17 @@ function Example() {
                         <div className="card-header">Example Component</div>
 
                         <div className="card-body">I'm an example component!</div>
+                        <div>
+                        <input type="text" value={this.state.firstName}
+                        onChange={event => this.setState({firstName: event.target.value})}/>
+
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     );
+}
 }
 
 export default Example;

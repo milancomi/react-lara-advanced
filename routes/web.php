@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\StoriesController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -30,5 +32,8 @@ Route::get('/story', 'StoriesController@index')->name('story.list');
 Route::get('/story/add', 'StoriesController@create')->name('story.add');
 
 Route::post('/story/save', 'StoriesController@store')->name('story.save');
+Route::get('/story/view/{id}', [StoriesController::class, 'view'])->name('story.view');
+// moze i ovako
+
 
 });
