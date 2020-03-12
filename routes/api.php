@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CommentController;
+
+
 
 /*
 |--------------------------------------------------------------------------
@@ -18,4 +21,8 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 
-Route::post('comment/save','CommentController@create');
+Route::group(['middleware' => 'auth:api'], function() {
+    Route::post('comment/save', [CommentController::class, 'create']);
+    Route::get('story/comments/{storyId}', [CommentController::class, 'index']);
+});
+

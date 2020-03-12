@@ -65798,8 +65798,15 @@ var Comment = /*#__PURE__*/function (_Component) {
   _createClass(Comment, [{
     key: "render",
     value: function render() {
-      var body = this.props.body;
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, body);
+      var _this$props$comment = this.props.comment,
+          body = _this$props$comment.body,
+          created_at = _this$props$comment.created_at;
+      var name = this.props.comment.creator.name;
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "comment card mb-2"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", {
+        className: "card-body"
+      }, react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("strong", null, name), " ", created_at, " ", react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("br", null), body));
     }
   }]);
 
@@ -65881,10 +65888,10 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(react__WEBPACK_IMPORTED_MODULE_0__);
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! react-dom */ "./node_modules/react-dom/index.js");
 /* harmony import */ var react_dom__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(react_dom__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _CommentAdd__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./CommentAdd */ "./resources/js/components/comments/CommentAdd.js");
-/* harmony import */ var _Comment__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./Comment */ "./resources/js/components/comments/Comment.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
-/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_4___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_4__);
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! axios */ "./node_modules/axios/index.js");
+/* harmony import */ var axios__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(axios__WEBPACK_IMPORTED_MODULE_2__);
+/* harmony import */ var _CommentAdd__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./CommentAdd */ "./resources/js/components/comments/CommentAdd.js");
+/* harmony import */ var _Comment__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(/*! ./Comment */ "./resources/js/components/comments/Comment.js");
 function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -65918,42 +65925,42 @@ var CommentGroup = /*#__PURE__*/function (_Component) {
     _classCallCheck(this, CommentGroup);
 
     _this = _possibleConstructorReturn(this, _getPrototypeOf(CommentGroup).call(this, props));
+    var arrUrl = window.location.href.split('/');
+    var storyId = arrUrl[arrUrl.length - 1];
     _this.state = {
-      comments: [{
-        id: 1,
-        body: 'This is my first comment'
-      }, {
-        id: 2,
-        body: 'This is my second comment'
-      }, {
-        id: 3,
-        body: 'This is my third comment'
-      }]
+      comments: [],
+      storyId: storyId
     };
     _this.handleCommentSubmit = _this.handleCommentSubmit.bind(_assertThisInitialized(_this));
     return _this;
   }
 
   _createClass(CommentGroup, [{
-    key: "handleCommentSubmit",
-    value: function handleCommentSubmit(data) {
+    key: "componentWillMount",
+    value: function componentWillMount() {
       var _this2 = this;
 
-      // console.log('handleCommentSubmit',data);
-      // // send function as prop to child
-      // Functional and statelles component
-      var postData = {
-        comment: data
-      };
-      axios__WEBPACK_IMPORTED_MODULE_4___default.a.post('/api/comment/save', postData).then(function (response) {
-        // console.log('response', response.data);
-        var comments = _this2.state.comments;
-        comments.unshift({
-          id: comments.length + 1,
-          body: response.data.comment
-        });
-
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.get("/api/story/comments/".concat(this.state.storyId)).then(function (response) {
         _this2.setState({
+          comments: response.data
+        });
+      });
+    }
+  }, {
+    key: "handleCommentSubmit",
+    value: function handleCommentSubmit(data) {
+      var _this3 = this;
+
+      var postData = {
+        comment: data,
+        storyId: this.state.storyId
+      };
+      axios__WEBPACK_IMPORTED_MODULE_2___default.a.post('/api/comment/save', postData).then(function (response) {
+        console.log('response', response.data);
+        var comments = _this3.state.comments;
+        comments.unshift(response.data);
+
+        _this3.setState({
           comments: comments
         });
       });
@@ -65962,19 +65969,17 @@ var CommentGroup = /*#__PURE__*/function (_Component) {
     key: "renderComments",
     value: function renderComments() {
       var comments = this.state.comments;
-      return comments.map(function (comment) {
-        var id = comment.id,
-            body = comment.body;
-        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Comment__WEBPACK_IMPORTED_MODULE_3__["default"], {
+      return comments.map(function (comment, id) {
+        return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_Comment__WEBPACK_IMPORTED_MODULE_4__["default"], {
           key: id,
-          body: body
+          comment: comment
         });
       });
     }
   }, {
     key: "render",
     value: function render() {
-      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.renderComments(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CommentAdd__WEBPACK_IMPORTED_MODULE_2__["default"], {
+      return react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement("div", null, this.renderComments(), react__WEBPACK_IMPORTED_MODULE_0___default.a.createElement(_CommentAdd__WEBPACK_IMPORTED_MODULE_3__["default"], {
         handleCommentSubmit: this.handleCommentSubmit
       }));
     }

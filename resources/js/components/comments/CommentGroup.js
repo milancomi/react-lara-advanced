@@ -1,72 +1,60 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import ReactDOM from 'react-dom';
-
-
+import axios from 'axios';
 import CommentAdd from './CommentAdd';
 import Comment from './Comment';
 
+class CommentGroup extends Component {
+  constructor(props) {
+    super(props);
 
-import axios from 'axios';
+    let arrUrl = window.location.href.split('/');
+    let storyId = arrUrl[arrUrl.length - 1];
 
-class CommentGroup extends Component{
-    constructor(props){
-        super(props);
-        this.state={
-            comments:[
-                {id:1,body:'This is my first comment'},
-                {id:2,body:'This is my second comment'},
-                {id:3,body:'This is my third comment'}
-
-            ]
-        }
-        this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
+    this.state = {
+      comments: [],
+      storyId: storyId
     }
-    handleCommentSubmit(data){
-        // console.log('handleCommentSubmit',data);
-        // // send function as prop to child
 
-        // Functional and statelles component
-        const postData={
-            comment: data
-        };
-        axios.post('/api/comment/save', postData).then(response =>{
-            // console.log('response', response.data);
-            let comments = this.state.comments;
-            comments.unshift({
-                id:comments.length + 1,
-                body: response.data.comment
-            });
-            this.setState({ comments: comments});
-
-        });
-    }
-    renderComments(){
-
-        const {comments} = this.state;
-
-       return comments.map(comment =>{
-            const {id , body} = comment;
-
-            return (
-                <Comment key={id} body={body}/>
-            );
-        })
-    }
-render(){
-    return(
-        <div>
-            {this.renderComments()}
-<CommentAdd handleCommentSubmit={this.handleCommentSubmit}/>
-        </div>
-        );
+    this.handleCommentSubmit = this.handleCommentSubmit.bind(this);
+  }
+  componentWillMount() {
+    axios.get(`/api/story/comments/${this.state.storyId}`).then(response => {
+      this.setState({ comments: response.data });
+    });
+  }
+  handleCommentSubmit(data) {
+    const postData = {
+      comment: data,
+      storyId: this.state.storyId
+    };
+    axios.post('/api/comment/save', postData).then((response) => {
+      console.log('response', response.data);
+      let comments = this.state.comments;
+      comments.unshift(response.data);
+      this.setState({ comments: comments });
+    });
+  }
+  renderComments() {
+    const { comments } = this.state;
+    return comments.map((comment, id) => {
+      return (
+        <Comment key={id} comment={comment}/>
+      );
+    })
+  }
+  render() {
+    return (
+      <div>
+        {this.renderComments()}
+        <CommentAdd handleCommentSubmit={this.handleCommentSubmit} />
+      </div>
+    );
+  }
 }
-
-}
-
 
 export default CommentGroup;
 
-
-if(document.getElementById('comments-wrapper')){
-    ReactDOM.render(<CommentGroup/>,document.getElementById('comments-wrapper'));
+if (document.getElementById('comments-wrapper')) {
+  ReactDOM.render(<CommentGroup />, document.getElementById('comments-wrapper'));
 }
