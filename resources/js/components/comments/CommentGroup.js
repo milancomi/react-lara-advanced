@@ -7,7 +7,7 @@ import Comment from './Comment';
 class CommentGroup extends Component {
   constructor(props) {
     super(props);
-
+//test
     let arrUrl = window.location.href.split('/');
     let storyId = arrUrl[arrUrl.length - 1];
 

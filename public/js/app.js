@@ -65924,7 +65924,8 @@ var CommentGroup = /*#__PURE__*/function (_Component) {
 
     _classCallCheck(this, CommentGroup);
 
-    _this = _possibleConstructorReturn(this, _getPrototypeOf(CommentGroup).call(this, props));
+    _this = _possibleConstructorReturn(this, _getPrototypeOf(CommentGroup).call(this, props)); //test
+
     var arrUrl = window.location.href.split('/');
     var storyId = arrUrl[arrUrl.length - 1];
     _this.state = {
